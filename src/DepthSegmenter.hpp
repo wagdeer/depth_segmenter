@@ -11,7 +11,7 @@ struct OrganizedImage3D {
         const cv::Vec3f& point = cloud.at<cv::Vec3f>(row, col);
         x = point[0], y = point[1], z = point[2];
         if (std::isnan(x) || std::isnan(y) || std::isnan(z) ||
-            (x == 0 && y == 0 && z == 0)) {
+           (x == 0 && y == 0 && z == 0)) {
             return false;
         }
         return true;
@@ -19,6 +19,7 @@ struct OrganizedImage3D {
     const double unitScaleFactor = 1;
     const cv::Mat& cloud;
 };
+
 typedef ahc::PlaneFitter<OrganizedImage3D> PlaneFitter;
 
 namespace segmenter {
@@ -28,10 +29,8 @@ struct CameraIntrinsics {
     cv::Mat K;
 
     CameraIntrinsics() {}
-
     CameraIntrinsics(cv::Mat &cam_intrinsics, uint32_t w, uint32_t h) :
         K(cam_intrinsics), width(w), height(h) {}
-
     CameraIntrinsics(float fx, float fy, float cx, float cy, uint32_t w, uint32_t h) :
         fx(fx), fy(fy), cx(cx), cy(cy), width(w), height(h) {
         K = cv::Mat::eye(cv::Size(3, 3), CV_32F);
@@ -57,6 +56,7 @@ struct Segmenterconfig {
 
 class DepthSegmenter {
 public:
+    DepthSegmenter() {}
     DepthSegmenter(cv::Mat &K, uint32_t w, uint32_t h, struct Segmenterconfig &config) {
         initAHCParams();
         camera_intrinsics_ = CameraIntrinsics(K, w, h);
@@ -260,13 +260,12 @@ private:
                                                          colors[i + plane_color_start_index][2]);
             }
         }
+
         if (debug_show_) {
             cv::imshow("label_map", output);
             cv::waitKey(1);
         }
     }
-
-    void initCameraIntrinsics(float fx, float fy, float cx, float cy, uint32_t w, uint32_t h);
 
     void initAHCParams() {
         pf_.minSupport = 1000;

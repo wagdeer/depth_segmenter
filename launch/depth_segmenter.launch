@@ -1,6 +1,8 @@
 <launch>
   <arg name="sensor_file" default="$(find depth_segmenter)/cfg/sensor_config.yaml"/>
+  <arg name="sensor_topics" default="$(find depth_segmenter)/cfg/sensor_topics.yaml"/>
   <node name="depth_segmenter_node" pkg="depth_segmenter" type="depth_segmenter" output="log">
     <rosparam command="load" file="$(arg sensor_file)"/>
+    <rosparam command="load" file="$(arg sensor_topics)"/>
   </node>
 </launch>
