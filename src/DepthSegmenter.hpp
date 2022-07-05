@@ -23,14 +23,13 @@ struct OrganizedImage3D {
 typedef ahc::PlaneFitter<OrganizedImage3D> PlaneFitter;
 
 namespace segmenter {
-struct CameraIntrinsics {
+struct CameraIntrinsics {       
     float fx, fy, cx, cy;
     uint32_t width, height;
     cv::Mat K;
 
     CameraIntrinsics() {}
-    CameraIntrinsics(cv::Mat &cam_intrinsics, uint32_t w, uint32_t h) :
-        K(cam_intrinsics), width(w), height(h) {}
+    CameraIntrinsics(cv::Mat &cam_intrinsics, uint32_t w, uint32_t h) : K(cam_intrinsics), width(w), height(h) {}
     CameraIntrinsics(float fx, float fy, float cx, float cy, uint32_t w, uint32_t h) :
         fx(fx), fy(fy), cx(cx), cy(cy), width(w), height(h) {
         K = cv::Mat::eye(cv::Size(3, 3), CV_32F);
@@ -117,7 +116,7 @@ public:
         constexpr double kNanThreshold = 0.0;
         cv::threshold(rescaled_depth, threshold_image, kNanThreshold, kMaxBinaryValue, cv::THRESH_BINARY);
 
-        // get un-plane threshold image
+        // get non-plane threshold image
         cv::Mat rescaled_plane_seg = cv::Mat(threshold_image.size(), CV_32FC1, cv::Scalar(0));
         cv::Mat un_plane_thres(threshold_image.size(), CV_32FC1);
         cv::cvtColor(plane_seg, plane_seg, cv::COLOR_RGB2GRAY);
@@ -127,11 +126,11 @@ public:
         std::cout << "rescaled_plane_seg.channels() = " << rescaled_plane_seg.channels() << std::endl;
         un_plane_thres = threshold_image - rescaled_plane_seg;
 
-        // open operator
+        // open operate
         cv::Mat element = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(open_kernel_size_, open_kernel_size_));
         cv::morphologyEx(un_plane_thres, un_plane_thres, cv::MORPH_OPEN, element);
 
-        // delete some bad point
+        // delete some bad points
         for (size_t i = 0; i < un_plane_thres.rows; ++i) {
             for (size_t j = 0; j < un_plane_thres.cols; ++j) {
                 if (un_plane_thres.at<float>(i, j) == 0) {
@@ -176,10 +175,9 @@ private:
     void generateRandomColorsAndLabels(size_t contours_size, std::vector<cv::Scalar> &colors, std::vector<int> &labels) {
         for (size_t i = colors.size(); i < contours_size; ++i) {
             labels.push_back(i);
-            colors.push_back(
-                cv::Scalar(255 * (rand() / static_cast<float>(RAND_MAX)),
-                           255 * (rand() / static_cast<float>(RAND_MAX)),
-                           255 * (rand() / static_cast<float>(RAND_MAX))));
+            colors.push_back(cv::Scalar(255 * (rand() / static_cast<float>(RAND_MAX)),
+                                        255 * (rand() / static_cast<float>(RAND_MAX)),
+                                        255 * (rand() / static_cast<float>(RAND_MAX))));
         }
     }
 
@@ -236,7 +234,7 @@ private:
         output.setTo(cv::Scalar(0, 0, 0), un_plane_8u == 0);
         output_labels.setTo(-1, un_plane_8u == 0);
 
-        // Create a map of all the labels.
+        // create a map of all the labels.
         size_t value = 0u;
         std::map<size_t, size_t> labels_map;
         for (size_t i = 0u; i < labels.size(); ++i) {
@@ -320,6 +318,7 @@ private:
         pf_.params.similarityTh_refine = std::cos(MACRO_DEG2RAD(config.similarityTh_refine));
     }
 
+    // default params
     void initAHCParams() {
         pf_.minSupport = 1000;
         pf_.windowWidth = 30;
@@ -364,6 +363,7 @@ private:
         return false;
     }
     
+    // plane detection
     PlaneFitter pf_;
 
     // config parameters

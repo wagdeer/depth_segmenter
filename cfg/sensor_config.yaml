@@ -17,7 +17,6 @@ minSupport: 1000
 windowWidth: 30
 windowHeight: 30
 doRefine: 1
-
 initType: 1
 
 # T_mse
