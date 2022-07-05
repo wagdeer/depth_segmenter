@@ -1,6 +1,32 @@
+#camera params
 fx: 544.473290
 fy: 544.473290
 cx: 320.000000
 cy: 240.000000
 height: 480
 width: 640
+
+# AHC config
+minSupport: 1000
+windowWidth: 30
+windowHeight: 30
+doRefine: 1
+
+initType: 1
+
+# T_mse
+stdTol_merge: 0.008;
+stdTol_init: 0.005;
+depthSigma: 1.6e-3;
+
+# T_dz
+depthAlpha: 0.04;
+depthChangeTol: 0.02;
+
+# T_ang
+z_near: 0.2
+z_far: 3.0
+angle_near: 45
+angle_far: 90
+similarityTh_merge: 60
+similarityTh_refine: 45

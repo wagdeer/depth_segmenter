@@ -47,23 +47,50 @@ struct Segment {
     std::vector<cv::Vec3f> points;
 };
 
-struct Segmenterconfig {
+struct SegmenterConfig {
     double min_area;
     double open_kernel_size;
     double distance_thres;
     bool debug_show;
 };
 
+struct PlaneFitterConfig {
+    int minSupport;
+    int windowWidth;
+    int windowHeight;
+    bool doRefine;
+
+    int initType;
+
+    //T_mse
+    double stdTol_merge;
+    double stdTol_init;
+    double depthSigma;
+
+    //T_dz
+    double depthAlpha;
+    double depthChangeTol;
+
+    //T_ang
+    double z_near;
+    double z_far;
+    double angle_near;
+    double angle_far;
+    double similarityTh_merge;
+    double similarityTh_refine;
+};
+
 class DepthSegmenter {
 public:
     DepthSegmenter() {}
-    DepthSegmenter(cv::Mat &K, uint32_t w, uint32_t h, struct Segmenterconfig &config) {
-        initAHCParams();
+    DepthSegmenter(cv::Mat &K, uint32_t w, uint32_t h, struct SegmenterConfig &segmenter_config,
+        struct PlaneFitterConfig & plane_config) {
+        initAHCParams(plane_config);
         camera_intrinsics_ = CameraIntrinsics(K, w, h);
-        min_area_ = config.min_area;
-        open_kernel_size_ = config.open_kernel_size;
-        distance_thres_ = config.distance_thres;
-        debug_show_ = config.debug_show;
+        min_area_ = segmenter_config.min_area;
+        open_kernel_size_ = segmenter_config.open_kernel_size;
+        distance_thres_ = segmenter_config.distance_thres;
+        debug_show_ = segmenter_config.debug_show;
     }
 
     DepthSegmenter(float fx, float fy, float cx, float cy, uint32_t w, uint32_t h) {
@@ -265,6 +292,32 @@ private:
             cv::imshow("label_map", output);
             cv::waitKey(1);
         }
+    }
+
+    void initAHCParams(const struct PlaneFitterConfig &config) {
+        pf_.minSupport = config.minSupport;
+        pf_.windowWidth = config.windowWidth;
+        pf_.windowHeight = config.windowHeight;
+        pf_.doRefine = config.doRefine;
+
+        pf_.params.initType = (ahc::InitType)config.initType;
+
+        //T_mse
+        pf_.params.stdTol_merge = config.stdTol_merge;
+        pf_.params.stdTol_init = config.stdTol_init;
+        pf_.params.depthSigma = config.depthSigma;
+
+        //T_dz
+        pf_.params.depthAlpha = config.depthAlpha;
+        pf_.params.depthChangeTol = config.depthChangeTol;
+
+        //T_ang
+        pf_.params.z_near = config.z_near;
+        pf_.params.z_far = config.z_far;
+        pf_.params.angle_near = MACRO_DEG2RAD(config.angle_near);
+        pf_.params.angle_far = MACRO_DEG2RAD(config.angle_far);
+        pf_.params.similarityTh_merge = std::cos(MACRO_DEG2RAD(config.similarityTh_merge));
+        pf_.params.similarityTh_refine = std::cos(MACRO_DEG2RAD(config.similarityTh_refine));
     }
 
     void initAHCParams() {
