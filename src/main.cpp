@@ -87,7 +87,6 @@ int main(int argc, char **argv) {
     ros::console::set_logger_level(ROSCONSOLE_DEFAULT_NAME, ros::console::levels::Info);
     
     DepthSegmenterNode node;
-
     while (ros::ok()) {
         ros::spin();
     }

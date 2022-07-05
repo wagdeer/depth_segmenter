@@ -6,6 +6,12 @@ cy: 240.000000
 height: 480
 width: 640
 
+#segmenter config
+min_area: 1000
+open_kernel_size: 5
+distance_thres: 0.08
+debug_show: true
+
 # AHC config
 minSupport: 1000
 windowWidth: 30
