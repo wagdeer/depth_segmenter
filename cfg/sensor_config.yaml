@@ -16,17 +16,17 @@ debug_show: true
 minSupport: 1000
 windowWidth: 30
 windowHeight: 30
-doRefine: 1
-initType: 1
+doRefine: true
+initType: 0
 
 # T_mse
-stdTol_merge: 0.008;
-stdTol_init: 0.005;
-depthSigma: 1.6e-3;
+stdTol_merge: 0.008
+stdTol_init: 0.005
+depthSigma: 1.6e-3
 
 # T_dz
-depthAlpha: 0.04;
-depthChangeTol: 0.02;
+depthAlpha: 0.04
+depthChangeTol: 0.02
 
 # T_ang
 z_near: 0.2

@@ -1,3 +1,5 @@
+#pragma once
+
 #include <opencv2/opencv.hpp>
 #include <opencv2/rgbd.hpp>
 #include "AHCPlaneFitter.hpp"
@@ -82,10 +84,10 @@ struct PlaneFitterConfig {
 class DepthSegmenter {
 public:
     DepthSegmenter() {}
-    DepthSegmenter(cv::Mat &K, uint32_t w, uint32_t h, struct SegmenterConfig &segmenter_config,
+    DepthSegmenter(float fx, float fy, float cx, float cy, uint32_t w, uint32_t h, struct SegmenterConfig &segmenter_config,
         struct PlaneFitterConfig & plane_config) {
         initAHCParams(plane_config);
-        camera_intrinsics_ = CameraIntrinsics(K, w, h);
+        camera_intrinsics_ = CameraIntrinsics(fx, fy, cx, cy, w, h);
         min_area_ = segmenter_config.min_area;
         open_kernel_size_ = segmenter_config.open_kernel_size;
         distance_thres_ = segmenter_config.distance_thres;
@@ -292,32 +294,6 @@ private:
         }
     }
 
-    void initAHCParams(const struct PlaneFitterConfig &config) {
-        pf_.minSupport = config.minSupport;
-        pf_.windowWidth = config.windowWidth;
-        pf_.windowHeight = config.windowHeight;
-        pf_.doRefine = config.doRefine;
-
-        pf_.params.initType = (ahc::InitType)config.initType;
-
-        //T_mse
-        pf_.params.stdTol_merge = config.stdTol_merge;
-        pf_.params.stdTol_init = config.stdTol_init;
-        pf_.params.depthSigma = config.depthSigma;
-
-        //T_dz
-        pf_.params.depthAlpha = config.depthAlpha;
-        pf_.params.depthChangeTol = config.depthChangeTol;
-
-        //T_ang
-        pf_.params.z_near = config.z_near;
-        pf_.params.z_far = config.z_far;
-        pf_.params.angle_near = MACRO_DEG2RAD(config.angle_near);
-        pf_.params.angle_far = MACRO_DEG2RAD(config.angle_far);
-        pf_.params.similarityTh_merge = std::cos(MACRO_DEG2RAD(config.similarityTh_merge));
-        pf_.params.similarityTh_refine = std::cos(MACRO_DEG2RAD(config.similarityTh_refine));
-    }
-
     // default params
     void initAHCParams() {
         pf_.minSupport = 1000;
@@ -343,6 +319,32 @@ private:
         pf_.params.angle_far = MACRO_DEG2RAD(90);
         pf_.params.similarityTh_merge = std::cos(MACRO_DEG2RAD(60));
         pf_.params.similarityTh_refine = std::cos(MACRO_DEG2RAD(45));
+    }
+
+    void initAHCParams(struct PlaneFitterConfig &config) {
+        pf_.minSupport = config.minSupport;
+        pf_.windowWidth = config.windowWidth;
+        pf_.windowHeight = config.windowHeight;
+        pf_.doRefine = config.doRefine;
+
+        pf_.params.initType = ahc::INIT_STRICT;
+
+        //T_mse
+        pf_.params.stdTol_merge = config.stdTol_merge;
+        pf_.params.stdTol_init = config.stdTol_init;
+        pf_.params.depthSigma = config.depthSigma;
+
+        //T_dz
+        pf_.params.depthAlpha = config.depthAlpha;
+        pf_.params.depthChangeTol = config.depthChangeTol;
+
+        //T_ang
+        pf_.params.z_near = config.z_near;
+        pf_.params.z_far = config.z_far;
+        pf_.params.angle_near = MACRO_DEG2RAD(config.angle_near);
+        pf_.params.angle_far = MACRO_DEG2RAD(config.angle_far);
+        pf_.params.similarityTh_merge = std::cos(MACRO_DEG2RAD(config.similarityTh_merge));
+        pf_.params.similarityTh_refine = std::cos(MACRO_DEG2RAD(config.similarityTh_refine));
     }
 
     bool checkPointDistanceToPlane(const cv::Vec3f &point, double thres) {
