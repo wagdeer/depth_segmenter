@@ -9,6 +9,6 @@ If you are interested in a global segmentation map, please also take a look at [
 [![](https://github.com/bindeer002/depth_segmenter/blob/main/BV17k4y1K7wc.jpg)](https://www.bilibili.com/video/BV17k4y1K7wc/?share_source=copy_web&vd_source=7275bc8284fb6a403d64bea38367dd8b)
 
 # download the dataset
-'''
+```
 wget http://robotics.ethz.ch/~asl-datasets/RAL-2019-voxblox-plusplus/scenenn_231/scenenn_231.bag
-'''
+```
