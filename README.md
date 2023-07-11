@@ -5,5 +5,4 @@ If you are interested in a global segmentation map, please also take a look at [
 
 ![gif](https://github.com/bindeer002/depth_segmenter/blob/main/depth_segmenter.gif)
 
-vedio
-<iframe src="//player.bilibili.com/player.html?aid=743054178&bvid=BV17k4y1K7wc&cid=1186364641&page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>
+[![](https://github.com/bindeer002/depth_segmenter/blob/main/BV17k4y1K7wc.jpg)](https://www.bilibili.com/video/BV17k4y1K7wc/?share_source=copy_web&vd_source=7275bc8284fb6a403d64bea38367dd8b)
